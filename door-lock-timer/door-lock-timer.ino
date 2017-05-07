@@ -8,11 +8,13 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 #define BTN1_PIN 6
 #define BTN2_PIN 5
 #define BUZZ_PIN 11
+#define RESET_ON_FAIL false
 
 const byte timer_minutes = 20;
 const byte code_length = 6;
 const byte combination[code_length] = { 1, 0, 0, 0, 0, 0 };
 
+// The entered code
 byte code[code_length] = {};
 
 // Keeps track of which digit is selected
@@ -248,7 +250,9 @@ bool code_is_valid() {
       delay( 50 );
     }
 
-    reset_code();
+    if ( RESET_ON_FAIL ) {
+      reset_code();
+    }
   } else {
     for ( int i = 0; i < 20; i++ ) {
       digitalWrite( BUZZ_PIN, HIGH );
