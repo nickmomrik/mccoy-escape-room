@@ -5,8 +5,8 @@
 
 Adafruit_SSD1306 display = Adafruit_SSD1306();
 
-#define BTN1_PIN 5
-#define BTN2_PIN 6
+#define BTN1_PIN 6
+#define BTN2_PIN 5
 #define BUZZ_PIN 11
 
 const byte timer_minutes = 20;
@@ -33,7 +33,6 @@ unsigned long timer_updated = 0;
 bool died = false;
 
 void setup() {
-  Serial.begin(9600);
   display.begin( SSD1306_SWITCHCAPVCC, 0x3C );
 
   display.display();
