@@ -94,6 +94,39 @@ void reset_code() {
   code_digit = 0;
 }
 
+
+// Generic function for displaying a list of selections and an underline to show which one is selected
+void display_selections(
+    byte display_width,     // Pixel width of the display
+    byte char_width,        // Pixel width of a single character
+    byte display_y,         // Pixel row where the selections will be printed
+    byte selections[],      // Array of selections
+    byte selections_length, // Number of items in the array
+    byte selection_chars,   // How many characters is a selection
+    byte selection_index    // Array index of the selected item
+  ) {
+
+  // Determine spacing for the selections
+  byte side_margin = ( display_width % selections_length ) / 2;
+  byte selection_space = ( display_width - ( 2 * side_margin ) ) / selections_length;
+  byte selection_margin = ( selection_space - ( selection_chars * char_width ) ) / 2;
+
+  // Display each selection
+  for ( int i = 0; i < selections_length; i++ ) {
+    display.setCursor( side_margin + selection_margin + ( i * selection_space ), display_y );
+    display.print( selections[i] );
+  }
+
+  // Underline the selected item
+  byte underscore_x = side_margin + selection_margin + ( selection_index * selection_space );
+  for ( int i = 0; i < selection_chars; i++ ) {
+    display.setCursor( underscore_x + ( i * char_width ), display_y + 4 );
+    display.print( '_' );
+  }
+
+  display.display();
+}
+
 // Update the display with various messages depending on the stage
 void update_display() {
   display.setCursor( 0, 0 );
@@ -166,38 +199,6 @@ void display_timer() {
   }
 
   timer_updated = millis();
-}
-
-// Generic function for displaying a list of selections and an underline to show which one is selected
-void display_selections(
-    byte display_width,     // Pixel width of the display
-    byte char_width,        // Pixel width of a single character
-    byte display_y,         // Pixel row where the selections will be printed
-    byte selections[],      // Array of selections
-    byte selections_length, // Number of items in the array
-    byte selection_chars,   // How many characters is a selection
-    byte selection_index    // Array index of the selected item
-  ) {
-
-  // Determine spacing for the selections
-  byte side_margin = ( display_width % selections_length ) / 2;
-  byte selection_space = ( display_width - ( 2 * side_margin ) ) / selections_length;
-  byte selection_margin = ( selection_space - ( selection_chars * char_width ) ) / 2;
-
-  // Display each selection
-  for ( int i = 0; i < selections_length; i++ ) {
-    display.setCursor( side_margin + selection_margin + ( i * selection_space ), display_y );
-    display.print( selections[i] );
-  }
-
-  // Underline the selected item
-  byte underscore_x = side_margin + selection_margin + ( selection_index * selection_space );
-  for ( int i = 0; i < selection_chars; i++ ) {
-    display.setCursor( underscore_x + ( i * char_width ), display_y + 4 );
-    display.print( '_' );
-  }
-
-  display.display();
 }
 
 // Check to see if the buttons have been pressed
@@ -283,36 +284,32 @@ void check_buttons() {
 
 // Determines if the code matches the combination
 bool code_is_valid() {
-  bool valid = true;
-
   for ( int i = 0; i < code_length; i++ ) {
     if ( code[i] != combination[i] ) {
-      valid = false;
+      // Buzz "womp-womp" type alert when wrong
+      for ( int i = 0; i < 2; i++ ) {
+        digitalWrite( BUZZ_PIN, HIGH );
+        delay( 100 );
+        digitalWrite( BUZZ_PIN, LOW );
+        delay( 50 );
+      }
+  
+      if ( RESET_ON_FAIL ) {
+        reset_code();
+      }
+
+      return false;
     }
   }
 
-  if ( ! valid ) {
-    // Buzz "womp-womp" type alert when wrong
-    for ( int i = 0; i < 2; i++ ) {
-      digitalWrite( BUZZ_PIN, HIGH );
-      delay( 100 );
-      digitalWrite( BUZZ_PIN, LOW );
-      delay( 50 );
-    }
-
-    if ( RESET_ON_FAIL ) {
-      reset_code();
-    }
-  } else {
-    // Play a quick series of sounds for correct, as if the door is unlocking
-    for ( int i = 0; i < 20; i++ ) {
-      digitalWrite( BUZZ_PIN, HIGH );
-      delay( 10 );
-      digitalWrite( BUZZ_PIN, LOW );
-      delay( 30 );
-    }
+  // Play a quick series of sounds for correct, as if the door is unlocking
+  for ( int i = 0; i < 20; i++ ) {
+    digitalWrite( BUZZ_PIN, HIGH );
+    delay( 10 );
+    digitalWrite( BUZZ_PIN, LOW );
+    delay( 30 );
   }
 
-  return valid;
+  return true;
 }
 
