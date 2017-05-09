@@ -4,14 +4,14 @@
 switch_pin = 4
 
 # Buttons
-button1_pin = 20
+button1_pin = 21
 button2_pin = 27
 
 # Next Phase
-next_phase_pin = 21
+next_phase_pin = 17
 
 # Shared 7 Segment Display Pins (A, B, C, D, E, F, G, DP)
-segment_pins = [ 18, 23, 24, 25, 8, 7, 12, 16 ]
+segment_pins = [ 18, 23, 24, 25, 8, 12, 16, 20 ]
 
 # Individual 7 Segment Displays
 digit_pins = [ 22, 5, 6, 13, 19, 26 ]
@@ -120,7 +120,7 @@ def update_displays() :
       segment_leds[7].off()
 
     digits[i].on()
-    sleep( 0.0001 )
+    sleep( 0.0008 )
     digits[i].off()
 
 # Setup gpiozero
