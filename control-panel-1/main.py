@@ -144,6 +144,9 @@ digits = []
 for i in range( len( digit_pins ) ) :
   digits.append( LED( digit_pins[i] ) )
 
+if ( switch.is_pressed ) :
+	switch_on()
+
 while ( True ) :
   if ( enabled ) :
   	update_displays()
