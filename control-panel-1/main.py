@@ -23,8 +23,8 @@ secret_code = [ 1, 0, 0, 0, 0, 0 ]
 # END CONFIG
 ############
 
-import RPi.GPIO as GPIO
-import time
+from gpiozero import LED, Button
+from time import sleep
 
 # Segment on/off for each number
 numbers = {
@@ -40,15 +40,6 @@ numbers = {
   9: ( 1, 1, 1, 1, 0, 1, 1 )
 }
 
-# Setup the pins
-GPIO.setmode( GPIO.BCM )
-GPIO.setup( switch_pin, GPIO.IN, pull_up_down = GPIO.PUD_DOWN )
-GPIO.setup( button1_pin, GPIO.IN, pull_up_down = GPIO.PUD_UP )
-GPIO.setup( button2_pin, GPIO.IN, pull_up_down = GPIO.PUD_UP )
-GPIO.setup( next_phase_pin, GPIO.OUT, initial = GPIO.LOW )
-GPIO.setup( segment_pins, GPIO.OUT, initial = GPIO.LOW )
-GPIO.setup( digit_pins, GPIO.OUT, initial = GPIO.LOW )
-
 # Various states
 enabled = False
 digit_values = [ 0, 0, 0, 0, 0, 0 ]
@@ -56,61 +47,103 @@ next_phase = False
 selected_digit = 0
 
 def reset() :
-  enabled = False
+  global enabled, next_phase, next_phase_out, selected_digit, digit_values
+
   next_phase = False
+  next_phase_out.off()
+
   selected_digit = 0
   for i in range( len( digit_values ) ) :
     digit_values[i] = 0
 
-def code_is_valid() :
+def switch_on() :
+  global enabled
+
+  enabled = True
+  reset()
+
+def switch_off() :
+  global enabled
+
+  enabled = False
+  reset()
+
+def button1_action() :
+  global selected_digit, digit_values
+
+  current_value = digit_values[selected_digit]
+  if ( 9 == current_value ) :
+    digit_values[selected_digit] = 0
+  else :
+    digit_values[selected_digit] += 1
+
+  check_code()
+
+def button2_action() :
+  global selected_digit, digit_values
+
+  if ( selected_digit == len( digit_values ) - 1 ) :
+    selected_digit = 0
+  else :
+    selected_digit += 1
+
+  check_code()
+
+def check_code() :
+  global digit_values, secret_code, next_phase, next_phase_out
+
+  valid = True
+
   for i in range( len( digit_values ) ) :
     if ( not secret_code[i] == digit_values[i] ) :
-      return False
+      valid = False
 
-  return True
+  next_phase = valid
+  if ( next_phase ) :
+	next_phase_out.on()
+  else :
+	next_phase_out.off()
 
-time.clock()
+def update_displays() :
+  global digits, numbers, digit_values, segment_leds, selected_digit
 
-try :
-  while ( True ) :
-    while ( not enabled ) :
-      if ( GPIO.HIGH == GPIO.input( switch_pin ) ) :
-        enabled = True
-        print "Switch enabled"
+  for i in range( len( digits ) ) :
+    for j in range( 7 ) :
+      if ( numbers[ digit_values[i] ][j] ) :
+        segment_leds[j].on()
+      else :
+        segment_leds[j].off()
 
-    if ( GPIO.LOW == GPIO.input( switch_pin ) ) :
-      reset()
+    if ( i == selected_digit ) :
+      segment_leds[7].on()
     else :
-      GPIO.output( next_phase_pin, next_phase )
+      segment_leds[7].off()
 
-      if ( not GPIO.input( button1_pin ) ) :
-        current_value = digit_values[selected_digit]
-        if ( 9 == current_value ) :
-          digit_values[selected_digit] = 0
-        else :
-          digit_values[selected_digit] += 1
+    digits[i].on()
+    sleep( 0.0004 )
+    digits[i].off()
 
-        next_phase = code_is_valid()
+# Setup gpiozero
+switch = Button( switch_pin, False )
+button1 = Button( button1_pin )
+button2 = Button( button2_pin )
 
-      if ( not GPIO.input( button2_pin ) ) :
-        if ( selected_digit < len( digit_values ) ) :
-          selected_digit += 1
-        else :
-          selected_digit = 0
+switch.when_pressed = switch_on
+switch.when_released = switch_off
 
-      for i in range( len( digit_values ) ) :
-        for j in range( 7 ) :
-          GPIO.output( segment_pins[j], numbers[ digit_values[i] ][j] )
-        if ( i == selected_digit ) :
-          GPIO.output( segment_pins[7], GPIO.HIGH )
-        else :
-          GPIO.output( segment_pins[7], GPIO.LOW )
+button1.when_pressed = button1_action
+button2.when_pressed = button2_action
 
-        GPIO.output( digit_pins[i], GPIO.HIGH )
-        time.sleep( 0.0005 )
-        GPIO.output( digit_pins[i], GPIO.LOW )
+next_phase_out = LED( next_phase_pin )
 
-except KeyboardInterrupt :
-  print 'Exiting via CTRL+C...'
-finally :
-  GPIO.cleanup()
+segment_leds = []
+for i in range( len( segment_pins ) ) :
+  segment_leds.append( LED( segment_pins[i] ) )
+
+digits = []
+for i in range( len( digit_pins ) ) :
+  digits.append( LED( digit_pins[i] ) )
+
+while ( True ) :
+  if ( enabled ) :
+  	update_displays()
