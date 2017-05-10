@@ -120,7 +120,7 @@ def update_displays() :
       segment_leds[7].off()
 
     digits[i].on()
-    sleep( 0.0008 )
+    sleep( 0.0005 )
     digits[i].off()
 
 # Setup gpiozero
