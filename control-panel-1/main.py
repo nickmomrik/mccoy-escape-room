@@ -1,20 +1,20 @@
 #!/usr/bin/python
 
-# Enable switch
-switch_pin = 4
+# Enable switch (also connected to 3v3)
+switch_pin = 22
 
 # Buttons
 button1_pin = 21
-button2_pin = 27
+button2_pin = 20
 
 # Next Phase
-next_phase_pin = 17
+next_phase_pin = 26
 
 # Shared 7 Segment Display Pins (A, B, C, D, E, F, G, DP)
-segment_pins = [ 18, 23, 24, 25, 8, 12, 16, 20 ]
+segment_pins = [ 4, 3, 14, 15, 18, 17, 27, 2 ]
 
 # Individual 7 Segment Displays
-digit_pins = [ 22, 5, 6, 13, 19, 26 ]
+digit_pins = [ 23, 24, 25, 8, 12, 16 ]
 
 # Correct code
 secret_code = [ 1, 0, 0, 0, 0, 0 ]
