@@ -23,7 +23,7 @@ secret_code = [ 1, 0, 0, 0, 0, 0 ]
 # END CONFIG
 ############
 
-from gpiozero import LED, Button
+from gpiozero import LED, Button, DigitalOutputDevice
 from time import sleep
 
 # Segment on/off for each number
@@ -59,14 +59,18 @@ def reset() :
 def switch_on() :
   global enabled
 
+  if ( not enabled ) :
+	reset()
+
   enabled = True
-  reset()
 
 def switch_off() :
   global enabled
 
+  if ( enabled ) :
+	reset()
+
   enabled = False
-  reset()
 
 def button1_action() :
   global selected_digit, digit_values
@@ -134,7 +138,7 @@ switch.when_released = switch_off
 button1.when_pressed = button1_action
 button2.when_pressed = button2_action
 
-next_phase_out = LED( next_phase_pin )
+next_phase_out = DigitalOutputDevice( next_phase_pin )
 
 segment_leds = []
 for i in range( len( segment_pins ) ) :
@@ -144,8 +148,9 @@ digits = []
 for i in range( len( digit_pins ) ) :
   digits.append( LED( digit_pins[i] ) )
 
+# Make sure initial state is correct
 if ( switch.is_pressed ) :
-	switch_on()
+  switch_on()
 
 while ( True ) :
   if ( enabled ) :
