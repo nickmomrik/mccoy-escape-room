@@ -1,7 +1,7 @@
-const byte BINARY2_PIN = 6;
-const byte BINARY1_PIN = 5;
-const byte BINARY0_PIN = 3;
-const byte GREEN_PIN = 11;
+const byte BINARY2_PIN = 16;
+const byte BINARY1_PIN = 4;
+const byte BINARY0_PIN = 5;
+const byte GREEN_PIN = 13;
 
 // Correct binary code
 // 011 = 3
@@ -19,19 +19,20 @@ void setup() {
 }
 
 void loop() {
-  delay( 50 );
+  bool correct = LOW;
 
   int read_in = digitalRead( BINARY0_PIN );
-  bool correct = false;
   if ( read_in == binary0 ) {
     read_in = digitalRead( BINARY1_PIN );
     if ( read_in == binary1 ) {
       read_in = digitalRead( BINARY2_PIN );
       if ( read_in == binary2 ) {
-        correct = true;
+        correct = HIGH;
       }
     }
   }
 
   digitalWrite( GREEN_PIN, correct );
+
+  delay( 50 );
 }
