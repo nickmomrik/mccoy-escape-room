@@ -17,7 +17,7 @@ segment_pins = [ 4, 3, 14, 15, 18, 17, 27, 2 ]
 digit_pins = [ 23, 24, 25, 8, 12, 16 ]
 
 # Correct code
-secret_code = [ 1, 0, 0, 0, 0, 0 ]
+secret_code = [ 1, 0, 2, 0, 3, 0 ]
 
 ############
 # END CONFIG
@@ -42,7 +42,7 @@ numbers = {
 
 # Various states
 enabled = False
-digit_values = [ 0, 0, 0, 0, 0, 0 ]
+digit_values = [ 5, 5, 5, 5, 5, 5 ]
 next_phase = False
 selected_digit = 0
 
