@@ -54,7 +54,7 @@ def reset() :
 
   selected_digit = 0
   for i in range( len( digit_values ) ) :
-    digit_values[i] = 0
+    digit_values[i] = 5
 
 def switch_on() :
   global enabled
