@@ -2,7 +2,7 @@
 
 #define CODE_4 0x1DE20DF
 
-const uint16_t IR_PIN = 4;
+const uint16_t IR_PIN = 2;
 const byte WHITE_PIN = 14;
 const byte RED_PIN = 5;
 
