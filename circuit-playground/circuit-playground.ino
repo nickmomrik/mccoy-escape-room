@@ -32,7 +32,7 @@ void readAccel() {
 void success() {
   CircuitPlayground.clearPixels();
 
-  for ( int i; i < 2; i++ ) {
+  for ( int i = 0; i < 2; i++ ) {
     for ( int j = 0; j < 10; j++ ) {
       CircuitPlayground.setPixelColor( j, 255, 255, 255 );
       delay( 10 );
