@@ -82,6 +82,11 @@ void loop() {
 
     save_key( key );
     if ( is_code_correct() ) {
+      delay( 500 );
+      for ( int i = 0; i < 3; i++ ) {
+        tone( piezo_pin, 6000, 200 );
+        delay( 400 );
+      }
       for ( int i = 0; i < 7; i++ ) {
         digitalWrite( led_pin, HIGH );
         delay( 500 );
