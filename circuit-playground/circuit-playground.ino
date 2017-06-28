@@ -48,7 +48,7 @@ void success() {
 }
 
 bool notTooLong() {
-  return last + 5000 > millis();
+  return last + 1000 > millis();
 }
 
 void win() {
