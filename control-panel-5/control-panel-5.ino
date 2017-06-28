@@ -55,7 +55,7 @@ void setup() {
   }
 
   pinMode( led_pin, OUTPUT );
-  digitalWrite( led_pin, LOW );
+  digitalWrite( led_pin, HIGH );
 
   pinMode( backlight_pin, OUTPUT );
   digitalWrite( backlight_pin, HIGH );
@@ -82,7 +82,8 @@ void loop() {
 
     save_key( key );
     if ( is_code_correct() ) {
-      delay( 500 );
+      digitalWrite( led_pin, LOW );
+      delay( 1000 );
       for ( int i = 0; i < 3; i++ ) {
         tone( piezo_pin, 6000, 200 );
         delay( 400 );
@@ -93,6 +94,9 @@ void loop() {
         digitalWrite( led_pin, LOW );
         delay( 500 );
       }
+
+      delay( 1500 );
+      digitalWrite( led_pin, HIGH );
     }
     
     if ( DEBUG ) {
