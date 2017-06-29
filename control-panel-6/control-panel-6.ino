@@ -127,6 +127,7 @@ void loop() {
       }
       
       if ( photocell_good and ultrasonic_good and magnet_good and pot_good ) {
+        delay( 500 );
         for ( int i = 0; i < 52; i++ ) {
           matrix.fillScreen( 0 );
           matrix.setCursor( x, 0 );
