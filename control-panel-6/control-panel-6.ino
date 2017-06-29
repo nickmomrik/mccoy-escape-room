@@ -11,6 +11,7 @@
 #define ULTRA_ECHO_PIN 11
 #define MAGNET_SWITCH_PIN 10
 #define ENABLE_SWITCH_PIN 9
+#define PIEZO_PIN 5
 
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix( 4, 8, 6,
   NEO_MATRIX_TOP     + NEO_MATRIX_RIGHT +
@@ -19,12 +20,13 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix( 4, 8, 6,
 
 const uint16_t orange = matrix.Color( 255, 69, 0 );
 int photocell_read;
-int photocell_good;
+bool photocell_good;
 long ultrasonic_read;
-int ultrasonic_good;
+bool ultrasonic_good;
 bool magnet_read;
+bool magnet_good;
 int pot_read;
-int pot_good;
+bool pot_good;
 bool enable_read;
 int x = matrix.width();
 
@@ -48,6 +50,10 @@ long read_ultrasonic() {
   return ( ultra_duration / 2 ) / 29.1;
 }
 
+void soundTone() {
+  tone( PIEZO_PIN, 1000, 100 );
+}
+
 void setup() {
   pinMode( ULTRA_TRIG_PIN, OUTPUT );
   pinMode( ULTRA_ECHO_PIN, INPUT );
@@ -59,8 +65,6 @@ void setup() {
   matrix.setBrightness( 40 );
   clearMatrix();
   matrix.setTextColor( orange );
-
-  Serial.begin( 9600 );
 }
 
 void loop() {
@@ -78,38 +82,51 @@ void loop() {
 
     while ( enable_read ) {
       photocell_read = analogRead( PHOTOCELL_PIN );
-      photocell_good = map( photocell_read, 650, 950, 0, 7 );
-      Serial.print( "Photo: " );
-      Serial.print( photocell_read );
-      Serial.print( " - " );
-      Serial.println( photocell_good );
+      photocell_read = map( photocell_read, 650, 950, 0, 7 );
+      if ( 7 == photocell_read ) {
+        if ( ! photocell_good ) {
+          soundTone();
+        }
+        photocell_good = true;
+      } else {
+        photocell_good = false;
+      }
     
       ultrasonic_read = read_ultrasonic();
-      ultrasonic_good = abs( 15 - ultrasonic_read );
-      ultrasonic_good = map( ultrasonic_good, 14, 0, 0, 7 );
-      Serial.print( "Ultrasonic: " );
-      Serial.print( ultrasonic_read );
-      Serial.print( "cm" );
-      Serial.print( " - " );
-      Serial.println( ultrasonic_good );
-    
+      ultrasonic_read = map( ultrasonic_read, 100, 4, 0, 7 );
+      if ( 7 == ultrasonic_read ) {
+        if ( ! ultrasonic_good ) {
+          soundTone();
+        }
+        ultrasonic_good = true;
+      } else {
+        ultrasonic_good = false;
+      }
+
       magnet_read = digitalRead( MAGNET_SWITCH_PIN );
-      Serial.print( "Magnet: " );
-      Serial.println( magnet_read );
+      if ( magnet_read ) {
+        if ( ! magnet_good ) {
+          soundTone();
+        }
+        magnet_good = true;
+      } else {
+        magnet_good = false;
+      }
     
       pot_read = analogRead( POT_PIN );
       pot_read = map( pot_read, 0, 1023, 0, 15 );
-      pot_good = abs( 7 - pot_read );
-      pot_good = map( pot_good, 7, 0, 0, 7 );
-      Serial.print( "Pot: " );
-      Serial.print( pot_read );
-      Serial.print( " - " );
-      Serial.println( pot_good );
+      pot_read = abs( 7 - pot_read );
+      pot_read = map( pot_read, 7, 0, 0, 7 );
+      if ( 7 == pot_read ) {
+        if ( ! pot_good ) {
+          soundTone();
+        }
+        pot_good = true;
+      } else {
+        pot_good = false;
+      }
       
-    
-      Serial.println( "" );
-      
-      if ( photocell_good == 7 and ultrasonic_good == 7 and magnet_read and pot_good == 7 ) {
+      if ( photocell_good and ultrasonic_good and magnet_good and pot_good ) {
         for ( int i = 0; i < 52; i++ ) {
           matrix.fillScreen( 0 );
           matrix.setCursor( x, 0 );
@@ -122,10 +139,10 @@ void loop() {
         }
       } else {
         clearMatrix();
-        for ( int i = photocell_good; i >= 0; i-- ) {
+        for ( int i = photocell_read; i >= 0; i-- ) {
           matrix.drawPixel( 0, 7 - i, orange );
         }
-        for ( int i = ultrasonic_good; i >= 0; i-- ) {
+        for ( int i = ultrasonic_read; i >= 0; i-- ) {
           matrix.drawPixel( 1, 7 - i, orange );
         }
         if ( magnet_read ) {
@@ -133,7 +150,7 @@ void loop() {
             matrix.drawPixel( 2, i, orange );
           }
         }
-        for ( int i = pot_good; i >= 0; i-- ) {
+        for ( int i = pot_read; i >= 0; i-- ) {
           matrix.drawPixel( 3, 7 - i, orange );
         }
         matrix.show();
