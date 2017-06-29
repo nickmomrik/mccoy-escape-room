@@ -86,8 +86,8 @@ void loop() {
       if ( 7 == photocell_read ) {
         if ( ! photocell_good ) {
           soundTone();
+          photocell_good = true;
         }
-        photocell_good = true;
       } else {
         photocell_good = false;
       }
@@ -97,8 +97,8 @@ void loop() {
       if ( 7 == ultrasonic_read ) {
         if ( ! ultrasonic_good ) {
           soundTone();
+          ultrasonic_good = true;
         }
-        ultrasonic_good = true;
       } else {
         ultrasonic_good = false;
       }
@@ -107,8 +107,8 @@ void loop() {
       if ( magnet_read ) {
         if ( ! magnet_good ) {
           soundTone();
+          magnet_good = true;
         }
-        magnet_good = true;
       } else {
         magnet_good = false;
       }
@@ -120,8 +120,8 @@ void loop() {
       if ( 7 == pot_read ) {
         if ( ! pot_good ) {
           soundTone();
+          pot_good = true;
         }
-        pot_good = true;
       } else {
         pot_good = false;
       }
