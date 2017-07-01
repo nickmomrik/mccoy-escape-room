@@ -14,11 +14,11 @@ Adafruit_SSD1306 display = Adafruit_SSD1306();
 
 // Choices for how long the timer should be
 const byte minute_length = 3;
-const byte minute_options[minute_length] = { 20, 30, 10 };
+const byte minute_options[minute_length] = { 30, 45, 20 };
 
 // Door lock code
 const byte code_length = 6;
-const byte combination[code_length] = { 1, 0, 0, 0, 0, 0 };
+const byte combination[code_length] = { 7, 3, 4, 9, 3, 1 };
 
 // Selected timer minutes
 byte selected_minutes = 0;
