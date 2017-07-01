@@ -15,6 +15,7 @@ segment_pins = [ 4, 3, 14, 15, 18, 17, 27, 2 ]
 
 # Individual 7 Segment Displays
 digit_pins = [ 23, 24, 25, 8, 12, 16 ]
+digit_values = [ 0, 0, 0, 0, 0, 0, 0 ]
 
 # Correct code
 secret_code = [ 1, 0, 2, 0, 3, 0 ]
@@ -24,6 +25,7 @@ secret_code = [ 1, 0, 2, 0, 3, 0 ]
 ############
 
 from gpiozero import LED, Button, DigitalOutputDevice
+import time
 from time import sleep
 
 # Segment on/off for each number
@@ -42,9 +44,15 @@ numbers = {
 
 # Various states
 enabled = False
-digit_values = [ 5, 5, 5, 5, 5, 5 ]
 next_phase = False
 selected_digit = 0
+
+def reset_date() :
+  global digit_values
+
+  date = time.strftime( '%m%d%y' )
+  for i in range( 6 ) :
+    digit_values[ i ] = int( date[ i ] )
 
 def reset() :
   global enabled, next_phase, next_phase_out, selected_digit, digit_values
@@ -52,9 +60,7 @@ def reset() :
   next_phase = False
   next_phase_out.off()
 
-  selected_digit = 0
-  for i in range( len( digit_values ) ) :
-    digit_values[i] = 5
+  reset_date()
 
 def switch_on() :
   global enabled
@@ -147,6 +153,8 @@ for i in range( len( segment_pins ) ) :
 digits = []
 for i in range( len( digit_pins ) ) :
   digits.append( LED( digit_pins[i] ) )
+
+reset_date()
 
 # Make sure initial state is correct
 if ( switch.is_pressed ) :
