@@ -1,0 +1,12 @@
+[Unit]
+Description=Control Panel 1
+Wants=multi-user.target
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /home/pi/control-panel-1/main.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
