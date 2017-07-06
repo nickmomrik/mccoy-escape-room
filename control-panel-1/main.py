@@ -15,7 +15,7 @@ segment_pins = [ 4, 3, 14, 15, 18, 17, 27, 2 ]
 
 # Individual 7 Segment Displays
 digit_pins = [ 23, 24, 25, 8, 12, 16 ]
-digit_values = [ 0, 0, 0, 0, 0, 0, 0 ]
+digit_values = [ 0, 0, 0, 0, 0, 0 ]
 
 # Correct code
 secret_code = [ 1, 0, 2, 0, 3, 0 ]
