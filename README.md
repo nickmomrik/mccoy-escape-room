@@ -1,6 +1,4 @@
 # mccoy-escape-room
 Escape the Room - McCoy's Engineering Room
 
-## control-panel-1
-
-Install Gpiozero - https://gpiozero.readthedocs.io/en/stable/index.html#install
+For information, visit my blog post [I Made an Escape Room](http://nick.blog/2017/12/30/i-made-an-escape-room).
